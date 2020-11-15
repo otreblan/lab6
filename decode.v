@@ -31,17 +31,17 @@ module decode (
     wire ALUOp;
     always @(*)
         casex (Op)
-            2'b00:
+            2'b00: // Alu
                 if (Funct[5])
                     controls = 10'b0000101001;
                 else
                     controls = 10'b0000001001;
-            2'b01:
-                if (Funct[0])
+            2'b01: // Memory
+                if (Funct[0]) // LDR*
                     controls = 10'b0001111000;
-                else
+                else // STR
                     controls = 10'b1001110100;
-            2'b10: controls = 10'b0110100010;
+            2'b10: controls = 10'b0110100010; // B
             default: controls = 10'bxxxxxxxxxx;
         endcase
     assign {RegSrc, ImmSrc, ALUSrc, MemtoReg, RegW, MemW, Branch, ALUOp} = controls;
