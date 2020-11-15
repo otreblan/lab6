@@ -31,10 +31,15 @@ module testbench;
         if (MemWrite)
             if ((DataAdr === 100) & (WriteData === 7)) begin
                 $display("Simulation succeeded");
-                $stop;
+                $finish;
             end
             else if (DataAdr !== 96) begin
-                $display("Simulation failed");
+                $fatal(1, "Simulation failed");
                 $stop;
             end
+
+    initial begin
+        $dumpfile("arm_single.vcd");
+        $dumpvars;
+    end
 endmodule
