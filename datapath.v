@@ -9,6 +9,7 @@ module datapath (
     ALUSrc,
     ALUControl,
     MemtoReg,
+    MemExtend,
     PCSrc,
     ALUFlags,
     PC,
@@ -25,6 +26,7 @@ module datapath (
     input wire ALUSrc;
     input wire [2:0] ALUControl;
     input wire MemtoReg;
+    input wire MemExtend;
     input wire PCSrc;
     output wire [3:0] ALUFlags;
     output wire [31:0] PC;
@@ -86,9 +88,31 @@ module datapath (
         .rd1(SrcA),
         .rd2(WriteData)
     );
+
+    wire [31:0] MemData;
+    wire [7:0] MemByte;
+
+    mux4 #(8) bytemux(
+        .d0(ReadData[7:0]),
+        .d1(ReadData[15:8]),
+        .d2(ReadData[23:16]),
+        .d3(ReadData[31:24]),
+        .s(ALUResult[1:0]),
+        .y(MemByte)
+    );
+
+    // 0 LDR
+    // 1 LDRB
+    mux2 #(32) BWmux(
+        .d0(ReadData),
+        .d1({24'b000000000000000000000000, MemByte}), // LDRB
+        .s(MemExtend),
+        .y(MemData)
+    );
+
     mux2 #(32) resmux(
         .d0(ALUResult),
-        .d1(ReadData),
+        .d1(MemData), // STR*
         .s(MemtoReg),
         .y(Result)
     );

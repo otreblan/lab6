@@ -22,6 +22,7 @@ module arm (
     wire RegWrite;
     wire ALUSrc;
     wire MemtoReg;
+    wire MemExtend;
     wire PCSrc;
     wire [1:0] RegSrc;
     wire [1:0] ImmSrc;
@@ -38,6 +39,7 @@ module arm (
         .ALUControl(ALUControl),
         .MemWrite(MemWrite),
         .MemtoReg(MemtoReg),
+        .MemExtend(MemExtend),
         .PCSrc(PCSrc)
     );
     datapath dp(
@@ -49,6 +51,7 @@ module arm (
         .ALUSrc(ALUSrc),
         .ALUControl(ALUControl),
         .MemtoReg(MemtoReg),
+        .MemExtend(MemExtend),
         .PCSrc(PCSrc),
         .ALUFlags(ALUFlags),
         .PC(PC),

@@ -9,6 +9,7 @@ module decode (
     RegW,
     MemW,
     MemtoReg,
+    MemExtend,
     ALUSrc,
     ImmSrc,
     RegSrc,
@@ -22,6 +23,7 @@ module decode (
     output wire RegW;
     output wire MemW;
     output wire MemtoReg;
+    output wire MemExtend;
     output wire ALUSrc;
     output wire [1:0] ImmSrc;
     output wire [1:0] RegSrc;
@@ -33,18 +35,21 @@ module decode (
         casex (Op)
             2'b00: // Alu
                 if (Funct[5])
-                    controls = 10'b0000101001;
+                    controls = 11'b00001001001;
                 else
-                    controls = 10'b0000001001;
+                    controls = 11'b00000001001;
             2'b01: // Memory
-                if (Funct[0]) // LDR*
-                    controls = 10'b0001111000;
+                if (Funct[0])
+                    if(Funct[3]) // LDRB
+                        controls = 11'b00011111000;
+                    else // LDR
+                        controls = 11'b00011101000;
                 else // STR
-                    controls = 10'b1001110100;
-            2'b10: controls = 10'b0110100010; // B
-            default: controls = 10'bxxxxxxxxxx;
+                    controls = 11'b10011100100;
+            2'b10: controls = 11'b01101000010; // B
+            default: controls = 11'bxxxxxxxxxxx;
         endcase
-    assign {RegSrc, ImmSrc, ALUSrc, MemtoReg, RegW, MemW, Branch, ALUOp} = controls;
+    assign {RegSrc, ImmSrc, ALUSrc, MemtoReg, MemExtend, RegW, MemW, Branch, ALUOp} = controls;
     always @(*)
         if (ALUOp) begin
             case (Funct[4:1])

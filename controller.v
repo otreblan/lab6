@@ -12,6 +12,7 @@ module controller (
     ALUControl,
     MemWrite,
     MemtoReg,
+    MemExtend,
     PCSrc
 );
     input wire clk;
@@ -25,6 +26,7 @@ module controller (
     output wire [2:0] ALUControl;
     output wire MemWrite;
     output wire MemtoReg;
+    output wire MemExtend;
     output wire PCSrc;
     wire [1:0] FlagW;
     wire PCS;
@@ -39,6 +41,7 @@ module controller (
         .RegW(RegW),
         .MemW(MemW),
         .MemtoReg(MemtoReg),
+        .MemExtend(MemExtend),
         .ALUSrc(ALUSrc),
         .ImmSrc(ImmSrc),
         .RegSrc(RegSrc),
