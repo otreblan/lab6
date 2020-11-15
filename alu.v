@@ -22,7 +22,8 @@ module alu(a, b, ALUControl, Result, ALUFlags);
     assign sum = a + _b + ALUControl[0];
 
     // Usé esto en lugar del switch para que Result no sea un reg.
-    assign Result = ALUControl[1]? (ALUControl[0]? (a|b) : (a&b)) : sum;
+    assign Result = ALUControl[2]? a^b:
+        ALUControl[1]? (ALUControl[0]? (a|b) : (a&b)) : sum;
 
     assign N = Result[31];
     assign Z = Result == 0;
