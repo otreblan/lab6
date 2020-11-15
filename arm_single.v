@@ -129,7 +129,7 @@ module arm (
     wire PCSrc;
     wire [1:0] RegSrc;
     wire [1:0] ImmSrc;
-    wire [1:0] ALUControl;
+    wire [2:0] ALUControl;
     controller c(
         .clk(clk),
         .reset(reset),
@@ -184,7 +184,7 @@ module controller (
     output wire RegWrite;
     output wire [1:0] ImmSrc;
     output wire ALUSrc;
-    output wire [1:0] ALUControl;
+    output wire [2:0] ALUControl;
     output wire MemWrite;
     output wire MemtoReg;
     output wire PCSrc;
@@ -245,7 +245,7 @@ module decode (
     output wire ALUSrc;
     output wire [1:0] ImmSrc;
     output wire [1:0] RegSrc;
-    output reg [1:0] ALUControl;
+    output reg [2:0] ALUControl;
     reg [9:0] controls;
     wire Branch;
     wire ALUOp;
@@ -268,17 +268,20 @@ module decode (
     always @(*)
         if (ALUOp) begin
             case (Funct[4:1])
-                4'b0100: ALUControl = 2'b00;
-                4'b0010: ALUControl = 2'b01;
-                4'b0000: ALUControl = 2'b10;
-                4'b1100: ALUControl = 2'b11;
-                default: ALUControl = 2'bxx;
+                4'b0100: ALUControl = 3'b000; // ADD
+                4'b0010: ALUControl = 3'b001; // SUB
+                4'b0000: ALUControl = 3'b010; // ORR
+                4'b1100: ALUControl = 3'b011; // AND
+
+                4'b0001: ALUControl = 3'b100; // EOR TODO: Modify ALU
+
+                default: ALUControl = 3'bxx;
             endcase
             FlagW[1] = Funct[0];
-            FlagW[0] = Funct[0] & ((ALUControl == 2'b00) | (ALUControl == 2'b01));
+            FlagW[0] = Funct[0] & ((ALUControl == 3'b000) | (ALUControl == 3'b001));
         end
         else begin
-            ALUControl = 2'b00;
+            ALUControl = 3'b000;
             FlagW = 2'b00;
         end
     assign PCS = ((Rd == 4'b1111) & RegW) | Branch;
@@ -392,7 +395,7 @@ module datapath (
     input wire RegWrite;
     input wire [1:0] ImmSrc;
     input wire ALUSrc;
-    input wire [1:0] ALUControl;
+    input wire [2:0] ALUControl;
     input wire MemtoReg;
     input wire PCSrc;
     output wire [3:0] ALUFlags;

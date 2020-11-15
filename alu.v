@@ -3,12 +3,13 @@
 
 module alu(a, b, ALUControl, Result, ALUFlags);
     input [31:0] a, b;
-    input [1:0] ALUControl;
-    // ALUControl | Operación
-    // 00         | ADD
-    // 01         | SUB
-    // 10         | AND
-    // 11         | ORR
+    input [2:0] ALUControl;
+    // ALUControl  | Operación
+    // 000         | ADD
+    // 001         | SUB
+    // 010         | AND
+    // 011         | ORR
+    // 100         | EOR
 
     output [31:0] Result;
     output [3:0] ALUFlags;
