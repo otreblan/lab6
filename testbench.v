@@ -15,7 +15,7 @@ module testbench;
     );
     initial begin
         reset <= 1;
-        #(22)
+        #(10)
             ;
         reset <= 0;
     end
@@ -27,17 +27,20 @@ module testbench;
         #(5)
             ;
     end
-    always @(negedge clk)
+    always @(negedge clk) begin
+        $display("%h %h %h %h", dut.PC, DataAdr, dut.arm.dp.ReadData, dut.MemWrite);
+
         if (MemWrite)
-            if ((DataAdr === 100) & (WriteData === 7)) begin
+            if ((DataAdr === 128) & (WriteData === 254)) begin
                 $display("Simulation succeeded");
                 $finish;
             end
-            else if (DataAdr !== 96) begin
-                $fatal(1, "Simulation failed");
-                $stop;
-            end
+        if (^dut.Instr === 1'bx) begin
+            $fatal(1, "Simulation failed");
+            $stop;
+        end
 
+    end
     initial begin
         $dumpfile("arm_single.vcd");
         $dumpvars;

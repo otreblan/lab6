@@ -28,7 +28,7 @@ module decode (
     output wire [1:0] ImmSrc;
     output wire [1:0] RegSrc;
     output reg [2:0] ALUControl;
-    reg [9:0] controls;
+    reg [10:0] controls; // Olvidé aumentar el tamaño
     wire Branch;
     wire ALUOp;
     always @(*)
@@ -39,11 +39,12 @@ module decode (
                 else
                     controls = 11'b00000001001;
             2'b01: // Memory
-                if (Funct[0])
+                if (Funct[0]) begin
                     if(Funct[3]) // LDRB
                         controls = 11'b00011111000;
                     else // LDR
                         controls = 11'b00011101000;
+                end
                 else // STR
                     controls = 11'b10011100100;
             2'b10: controls = 11'b01101000010; // B
